@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Fretboard } from '../components/fretboard/Fretboard'
 import { Button } from '../components/ui/Button'
 import { STANDARD_TUNING } from '../core/guitar'
+import { useProgressStore } from '../store/progressStore'
 import type { FretPosition } from '../types'
 
 const STRING_FACTS: Record<number, string> = {
@@ -18,6 +19,7 @@ const STRING_FACTS: Record<number, string> = {
 export function LearnPhase1() {
   const navigate = useNavigate()
   const [step, setStep] = useState(0) // 0 = intro, 1-6 = per-string, 7 = done
+  const completeLesson = useProgressStore((s) => s.completeLesson)
 
   const currentString = step >= 1 && step <= 6 ? STANDARD_TUNING[step - 1] : null
 
@@ -101,7 +103,10 @@ export function LearnPhase1() {
                   <Button variant="ghost" onClick={() => setStep((s) => Math.max(0, s - 1))}>
                     ← Back
                   </Button>
-                  <Button onClick={() => setStep((s) => s + 1)}>
+                  <Button onClick={() => {
+                    if (step === 6) completeLesson('1.1', 100, 20)
+                    setStep((s) => s + 1)
+                  }}>
                     {step < 6 ? `Next: ${STANDARD_TUNING[step]?.label} →` : 'I know all 6! →'}
                   </Button>
                 </div>

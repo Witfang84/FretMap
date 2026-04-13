@@ -11,12 +11,13 @@ export const STANDARD_TUNING: StringDefinition[] = [
 
 export const FRET_COUNT = 12
 
-// Equal temperament fret positions (normalized 0-1) for 12 frets
-// Position of fret N = 1 - (1/1.059463)^N
+// Equal temperament fret positions normalized to 0-1, where fret 12 = 1.0.
+// Raw formula: 1 - (1/1.059463)^N gives fret 12 ≈ 0.4994, so we divide by
+// that value so the last fret fills the full usable width.
 export function getFretPositions(totalFrets: number = FRET_COUNT): number[] {
-  const positions: number[] = []
-  for (let i = 0; i <= totalFrets; i++) {
-    positions.push(1 - Math.pow(1 / 1.059463, i))
-  }
-  return positions
+  const raw = Array.from({ length: totalFrets + 1 }, (_, i) =>
+    1 - Math.pow(1 / 1.059463, i),
+  )
+  const max = raw[totalFrets]
+  return raw.map((p) => p / max)
 }
