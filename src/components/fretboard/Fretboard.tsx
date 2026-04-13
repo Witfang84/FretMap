@@ -27,7 +27,7 @@ interface FretboardProps {
 const SVG_WIDTH = 900
 const SVG_PADDING_LEFT = 70   // room for open-string dots + legend
 const SVG_PADDING_RIGHT = 20
-const SVG_PADDING_TOP = 20
+const SVG_PADDING_TOP = 28
 const SVG_PADDING_BOTTOM = 35 // room for fret-marker dots below
 const STRING_AREA_HEIGHT = 140
 const BOARD_HEIGHT = SVG_PADDING_TOP + STRING_AREA_HEIGHT + SVG_PADDING_BOTTOM
@@ -171,11 +171,11 @@ export function Fretboard({
             <text
               key={fret}
               x={midX}
-              y={SVG_PADDING_TOP - 12}
+              y={SVG_PADDING_TOP - 10}
               textAnchor="middle"
-              fontSize="9"
-              fill="#6b5a45"
-              fontWeight="500"
+              fontSize="16"
+              fill="#8b7a65"
+              fontWeight="600"
             >
               {fret}
             </text>

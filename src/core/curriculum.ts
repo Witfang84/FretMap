@@ -40,6 +40,16 @@ export const CURRICULUM: Lesson[] = [
 
   // ── Phase 2: Natural Notes ────────────────────────────────────────────────
   {
+    id: '2.0',
+    phase: 2,
+    title: 'Fretboard Navigation Guide',
+    description: 'Shortcuts and patterns to find any note on the fretboard fast.',
+    challengeType: 'teach',
+    xpReward: 20,
+    unlockRequirement: '1.4',
+    teachRoute: '/learn/tips',
+  },
+  {
     id: '2.1',
     phase: 2,
     title: 'High E String Notes',

@@ -90,7 +90,7 @@ export function Home() {
               fullWidth
               onClick={() => {
                 if (nextLesson.challengeType === 'teach') {
-                  navigate(nextLesson.phase === 1 ? '/learn/phase1' : '/learn/phase2')
+                  navigate(nextLesson.teachRoute ?? (nextLesson.phase === 1 ? '/learn/phase1' : '/learn/phase2'))
                 } else {
                   navigate(`/quiz/${nextLesson.id}`)
                 }

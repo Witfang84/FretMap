@@ -27,7 +27,7 @@ export function LessonNode({ lesson, progress, isUnlocked, index }: LessonNodePr
   function handleClick() {
     if (!isUnlocked) return
     if (lesson.challengeType === 'teach') {
-      navigate(lesson.phase === 1 ? '/learn/phase1' : '/learn/phase2')
+      navigate(lesson.teachRoute ?? (lesson.phase === 1 ? '/learn/phase1' : '/learn/phase2'))
     } else {
       navigate(`/quiz/${lesson.id}`)
     }
