@@ -25,11 +25,11 @@ interface FretboardProps {
 
 // SVG viewport constants
 const SVG_WIDTH = 900
-const SVG_PADDING_LEFT = 70   // room for open-string dots + legend
-const SVG_PADDING_RIGHT = 20
-const SVG_PADDING_TOP = 28
-const SVG_PADDING_BOTTOM = 35 // room for fret-marker dots below
-const STRING_AREA_HEIGHT = 140
+const SVG_PADDING_LEFT = 85   // room for open-string dots + legend (increased for larger labels)
+const SVG_PADDING_RIGHT = 25
+const SVG_PADDING_TOP = 42    // gap: fret-number text bottom → board top ≥ 10 SVG units
+const SVG_PADDING_BOTTOM = 52 // gap: board bottom → inlay dot centre ≥ 14 SVG units
+const STRING_AREA_HEIGHT = 168 // 168/5 = 33.6 SVG units per string; fits r=12 dots with ~8px gap
 const BOARD_HEIGHT = SVG_PADDING_TOP + STRING_AREA_HEIGHT + SVG_PADDING_BOTTOM
 
 // String thicknesses: index 0 = E1 (thinnest), index 5 = E6 (thickest)
@@ -79,8 +79,8 @@ export function Fretboard({
     return 'default'
   }
 
-  // In teach mode with showStringLabels, we show labels on all non-default dots
-  const showLabels = mode === 'teach' && showStringLabels
+  // Show note names inside dots in all non-quiz modes (teach + display)
+  const showLabels = mode !== 'quiz'
 
   const viewBox = `0 0 ${SVG_WIDTH} ${BOARD_HEIGHT}`
 
@@ -89,7 +89,7 @@ export function Fretboard({
       <svg
         viewBox={viewBox}
         className="w-full"
-        style={{ maxHeight: '220px', minWidth: '320px' }}
+        style={{ maxHeight: '310px', minWidth: '320px' }}
         aria-label="Guitar fretboard"
         role="img"
       >
@@ -171,7 +171,7 @@ export function Fretboard({
             <text
               key={fret}
               x={midX}
-              y={SVG_PADDING_TOP - 10}
+              y={SVG_PADDING_TOP - 18}
               textAnchor="middle"
               fontSize="16"
               fill="#8b7a65"

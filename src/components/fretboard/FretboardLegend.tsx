@@ -19,7 +19,7 @@ export function FretboardLegend({ stringYPositions, nutX, highlightedString }: F
             y={stringYPositions[i]}
             textAnchor="middle"
             dominantBaseline="middle"
-            fontSize="11"
+            fontSize="15"
             fontWeight={isHighlighted ? '800' : '600'}
             fill={isHighlighted ? '#f59e0b' : '#9ca3af'}
             animate={{ fill: isHighlighted ? '#f59e0b' : '#9ca3af' }}
