@@ -275,7 +275,7 @@ export function LearnTips() {
                   </p>
                 ))}
                 {current.extra && (
-                  <p className="text-stone-500 text-xs mt-3 pt-3 border-t border-stone-800">
+                  <p className="text-stone-500 text-sm mt-3 pt-3 border-t border-stone-800">
                     {current.extra}
                   </p>
                 )}
@@ -290,8 +290,8 @@ export function LearnTips() {
                   transition={{ delay: 0.15 }}
                 >
                   <Fretboard
-                    mode={current.showStringLabels ? 'teach' : 'display'}
-                    showStringLabels={current.showStringLabels}
+                    mode="teach"
+                    showStringLabels={true}
                     highlightPositions={current.highlightPositions ?? []}
                     correctPositions={current.correctPositions ?? []}
                     wrongPositions={current.wrongPositions ?? []}

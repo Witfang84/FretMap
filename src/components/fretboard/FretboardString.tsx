@@ -25,7 +25,7 @@ export function FretboardString({
   getDotState,
   onFretClick,
 }: FretboardStringProps) {
-  const dotR = 9
+  const dotR = 12
 
   // Calculate X center for a given fret position
   function getDotX(fret: number): number {

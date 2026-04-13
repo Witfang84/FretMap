@@ -9,7 +9,7 @@ interface FretMarkersProps {
 }
 
 export function FretMarkers({ fretXPositions, svgHeight, nutX }: FretMarkersProps) {
-  const markerY = svgHeight + 16
+  const markerY = svgHeight + 22
   const dotR = 6
 
   function getMidX(fret: number): number {
