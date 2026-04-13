@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  --color-fretboard-bg: #2c1e0f;
+  --color-fretboard-wood: #4a2f1a;
+  --color-fret-line: #8a7a6a;
+  --color-nut: #d4c4a0;
+  --color-string: #c8b89a;
+  --color-inlay: #e8dcc8;
+  --color-dot-highlight: #f59e0b;
+  --color-dot-correct: #22c55e;
+  --color-dot-wrong: #ef4444;
+  --color-bg-app: #0f0a05;
+  --color-text-primary: #f5f0e8;
+  --color-text-muted: #9ca3af;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-bg-app);
+  color: var(--color-text-primary);
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
