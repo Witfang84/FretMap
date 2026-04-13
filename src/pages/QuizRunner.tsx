@@ -73,7 +73,7 @@ export function QuizRunner() {
       case 'click-the-note': {
         const variant =
           lesson!.id === '2.7' ? 'full' :
-          lesson!.id === '2.6' ? 'octave' :
+          lesson!.id === '2.4' ? 'octave' :
           'basic'
         return <ClickTheNote variant={variant} onComplete={handleComplete} />
       }
