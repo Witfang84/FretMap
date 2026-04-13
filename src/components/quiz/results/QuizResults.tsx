@@ -1,6 +1,31 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '../../ui/Button'
 import { AnimatedNumber } from '../../ui/AnimatedNumber'
+
+function playSuccessChime(stars: number) {
+  try {
+    const ctx = new AudioContext()
+    // C-major arpeggio; 3-star gets full triad, 2-star gets two notes, 1-star gets one
+    const notes = [523.25, 659.25, 783.99].slice(0, stars)
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.type = 'sine'
+      osc.frequency.value = freq
+      const t = ctx.currentTime + i * 0.12
+      gain.gain.setValueAtTime(0, t)
+      gain.gain.linearRampToValueAtTime(0.25, t + 0.02)
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.55)
+      osc.start(t)
+      osc.stop(t + 0.55)
+    })
+  } catch {
+    // AudioContext unavailable — silently skip
+  }
+}
 
 interface QuizResultsProps {
   score: number
@@ -34,6 +59,11 @@ export function QuizResults({ score, correctCount, totalQuestions, xpEarned, les
   const stars = score >= 90 ? 3 : score >= 70 ? 2 : 1
   const messages = ['Keep practicing!', 'Good job!', 'Perfect!']
   const message = messages[stars - 1]
+
+  useEffect(() => {
+    const t = setTimeout(() => playSuccessChime(stars), 350)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
     <motion.div

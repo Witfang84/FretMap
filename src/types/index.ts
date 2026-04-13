@@ -43,6 +43,7 @@ export interface Lesson {
   targetStrings?: number[]
   xpReward: number
   unlockRequirement?: string
+  teachRoute?: string   // for 'teach' lessons: the page route to navigate to
 }
 
 export interface LessonProgress {
