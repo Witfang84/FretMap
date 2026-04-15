@@ -1,10 +1,9 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Home } from './pages/Home'
 import { LearnPhase1 } from './pages/LearnPhase1'
 import { LearnPhase2 } from './pages/LearnPhase2'
 import { LearnTips } from './pages/LearnTips'
 import { QuizRunner } from './pages/QuizRunner'
-import { ProgressPage } from './pages/ProgressPage'
 
 export default function App() {
   return (
@@ -15,7 +14,8 @@ export default function App() {
         <Route path="/learn/phase2" element={<LearnPhase2 />} />
         <Route path="/learn/tips" element={<LearnTips />} />
         <Route path="/quiz/:lessonId" element={<QuizRunner />} />
-        <Route path="/progress" element={<ProgressPage />} />
+        {/* Progress page merged into Home — redirect for any existing links */}
+        <Route path="/progress" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

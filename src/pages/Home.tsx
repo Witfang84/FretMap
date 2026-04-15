@@ -2,18 +2,19 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Fretboard } from '../components/fretboard/Fretboard'
 import { Button } from '../components/ui/Button'
-import { LessonNode } from '../components/progress/LessonNode'
 import { StreakBanner } from '../components/progress/StreakBanner'
+import { PhaseCard } from '../components/progress/PhaseCard'
 import { useProgressStore } from '../store/progressStore'
 import { CURRICULUM, getLessonsByPhase } from '../core/curriculum'
+import type { FretPosition } from '../types'
 
 export function Home() {
   const navigate = useNavigate()
-  const { lessonProgress, currentStreak, totalXP } = useProgressStore()
+  const { lessonProgress, currentStreak, totalXP, positionWeights } = useProgressStore()
   const isLessonUnlocked = useProgressStore((s) => s.isLessonUnlocked)
   const level = useProgressStore((s) => s.level())
 
-  // Find the first incomplete unlocked lesson
+  // First incomplete unlocked lesson → big CTA button
   const nextLesson = CURRICULUM.find(
     (l) =>
       isLessonUnlocked(l.id, l.unlockRequirement) &&
@@ -21,8 +22,36 @@ export function Home() {
   )
 
   const hasProgress = Object.keys(lessonProgress).length > 0
+  const hasMasteryData = Object.keys(positionWeights).length > 0
+
+  // Build mastery heat map buckets from spaced-repetition weights
+  const masteredPositions: FretPosition[] = []
+  const practicePositions: FretPosition[] = []
+  const needsWorkPositions: FretPosition[] = []
+
+  Object.entries(positionWeights).forEach(([key, weight]) => {
+    const m = key.match(/str(\d+)-fret(\d+)/)
+    if (!m) return
+    const pos: FretPosition = {
+      stringNumber: parseInt(m[1]) as 1 | 2 | 3 | 4 | 5 | 6,
+      fret: parseInt(m[2]),
+    }
+    if (weight < 0.3) masteredPositions.push(pos)
+    else if (weight < 0.6) practicePositions.push(pos)
+    else needsWorkPositions.push(pos)
+  })
+
   const phase1Lessons = getLessonsByPhase(1)
   const phase2Lessons = getLessonsByPhase(2)
+
+  function handleContinue() {
+    if (!nextLesson) return
+    if (nextLesson.challengeType === 'teach') {
+      navigate(nextLesson.teachRoute ?? (nextLesson.phase === 1 ? '/learn/phase1' : '/learn/phase2'))
+    } else {
+      navigate(`/quiz/${nextLesson.id}`)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#0f0a05] flex flex-col">
@@ -33,17 +62,17 @@ export function Home() {
             <span className="text-amber-500 text-xl">🎸</span>
             <span className="text-stone-100 font-black text-xl tracking-tight">FretMap</span>
           </div>
-          <button
-            onClick={() => navigate('/progress')}
-            className="text-stone-500 hover:text-stone-300 text-sm transition-colors"
-          >
-            Progress →
-          </button>
+          {hasProgress && (
+            <span className="text-stone-600 text-xs font-semibold">
+              Level {level}
+            </span>
+          )}
         </div>
       </div>
 
       <div className="flex-1 max-w-3xl mx-auto w-full px-4 py-6 flex flex-col gap-6">
-        {/* Hero */}
+
+        {/* ── New-user hero ─────────────────────────────────── */}
         {!hasProgress && (
           <motion.div
             className="text-center py-4"
@@ -60,95 +89,87 @@ export function Home() {
           </motion.div>
         )}
 
-        {/* Streak banner if has progress */}
+        {/* ── Streak / XP banner ────────────────────────────── */}
         {hasProgress && (
           <StreakBanner streak={currentStreak} totalXP={totalXP} level={level} />
         )}
 
-        {/* Fretboard preview */}
+        {/* ── Fretboard panel ───────────────────────────────── */}
         <motion.div
           className="bg-stone-900 border border-stone-800 rounded-2xl p-5"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
         >
-          <p className="text-stone-500 text-xs mb-3 text-center">
-            Can you name every note on this fretboard?
-          </p>
-          <Fretboard mode="display" />
+          {hasMasteryData ? (
+            <>
+              <h3 className="text-stone-300 font-semibold mb-1">Fretboard Mastery Map</h3>
+              <p className="text-stone-600 text-xs mb-4">
+                Green = mastered · Yellow = practice more · Red = needs work
+              </p>
+              <Fretboard
+                mode="display"
+                correctPositions={masteredPositions}
+                highlightPositions={practicePositions}
+                wrongPositions={needsWorkPositions}
+              />
+            </>
+          ) : (
+            <>
+              <p className="text-stone-500 text-sm mb-3 text-center">
+                Can you name every note on this fretboard?
+              </p>
+              <Fretboard mode="display" />
+            </>
+          )}
         </motion.div>
 
-        {/* Continue button */}
+        {/* ── Continue / Start CTA ──────────────────────────── */}
         {nextLesson && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Button
-              size="lg"
-              fullWidth
-              onClick={() => {
-                if (nextLesson.challengeType === 'teach') {
-                  navigate(nextLesson.teachRoute ?? (nextLesson.phase === 1 ? '/learn/phase1' : '/learn/phase2'))
-                } else {
-                  navigate(`/quiz/${nextLesson.id}`)
-                }
-              }}
-            >
+            <Button size="lg" fullWidth onClick={handleContinue}>
               {hasProgress ? `Continue: ${nextLesson.title} →` : `Start: ${nextLesson.title} →`}
             </Button>
           </motion.div>
         )}
 
-        {/* All done */}
+        {/* ── All done ──────────────────────────────────────── */}
         {!nextLesson && hasProgress && (
           <div className="text-center py-4">
             <div className="text-4xl mb-2">🏆</div>
             <p className="text-stone-300 font-bold">All lessons complete!</p>
-            <p className="text-stone-500 text-sm">Sharps & flats coming in Phase 3...</p>
+            <p className="text-stone-500 text-sm">Sharps & flats coming in Phase 3…</p>
           </div>
         )}
 
-        {/* Phase 1 lessons */}
-        <div>
-          <h2 className="text-stone-400 text-xs font-bold uppercase tracking-wider mb-3">
-            Phase 1 — Open Strings
-          </h2>
-          <div className="flex flex-col gap-2">
-            {phase1Lessons.map((l, i) => (
-              <LessonNode
-                key={l.id}
-                lesson={l}
-                progress={lessonProgress[l.id]}
-                isUnlocked={isLessonUnlocked(l.id, l.unlockRequirement)}
-                index={i}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Phase 2 lessons */}
-        <div>
-          <h2 className="text-stone-400 text-xs font-bold uppercase tracking-wider mb-3">
-            Phase 2 — Natural Notes
-          </h2>
-          <div className="flex flex-col gap-2">
-            {phase2Lessons.map((l, i) => (
-              <LessonNode
-                key={l.id}
-                lesson={l}
-                progress={lessonProgress[l.id]}
-                isUnlocked={isLessonUnlocked(l.id, l.unlockRequirement)}
-                index={i}
-              />
-            ))}
-          </div>
+        {/* ── Phase dashboards (collapsible) ────────────────── */}
+        <div className="flex flex-col gap-4">
+          <PhaseCard
+            phase={1}
+            title="Open Strings"
+            description="Learn the names of all 6 open strings"
+            lessons={phase1Lessons}
+            lessonProgress={lessonProgress}
+            defaultOpen={!nextLesson || nextLesson.phase === 1}
+          />
+          <PhaseCard
+            phase={2}
+            title="Natural Notes"
+            description="Master A B C D E F G across the entire fretboard"
+            lessons={phase2Lessons}
+            lessonProgress={lessonProgress}
+            defaultOpen={nextLesson?.phase === 2}
+          />
         </div>
 
         <div className="text-center py-4">
           <p className="text-stone-700 text-xs">Phase 3 (Sharps & Flats) — coming soon</p>
         </div>
+
       </div>
     </div>
   )
