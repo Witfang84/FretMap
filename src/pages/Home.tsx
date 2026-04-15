@@ -154,7 +154,7 @@ export function Home() {
             description="Learn the names of all 6 open strings"
             lessons={phase1Lessons}
             lessonProgress={lessonProgress}
-            defaultOpen={!hasProgress}
+            defaultOpen={!nextLesson || nextLesson.phase === 1}
           />
           <PhaseCard
             phase={2}
@@ -162,6 +162,7 @@ export function Home() {
             description="Master A B C D E F G across the entire fretboard"
             lessons={phase2Lessons}
             lessonProgress={lessonProgress}
+            defaultOpen={nextLesson?.phase === 2}
           />
         </div>
 
