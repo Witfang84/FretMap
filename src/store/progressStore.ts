@@ -15,6 +15,7 @@ interface ProgressState {
   lastActiveDate: string
   totalXP: number
   positionWeights: Record<string, number>
+  adminMode: boolean
 
   // Computed
   level: () => number
@@ -24,6 +25,7 @@ interface ProgressState {
   completeLesson: (lessonId: string, score: number, xpReward: number) => void
   recordAnswer: (pos: FretPosition, correct: boolean) => void
   checkAndUpdateStreak: () => void
+  toggleAdminMode: () => void
 }
 
 export const useProgressStore = create<ProgressState>()(
@@ -35,14 +37,18 @@ export const useProgressStore = create<ProgressState>()(
       lastActiveDate: '',
       totalXP: 0,
       positionWeights: {},
+      adminMode: false,
 
       level: () => Math.floor(get().totalXP / 100) + 1,
 
       isLessonUnlocked: (_lessonId: string, unlockRequirement?: string) => {
+        if (get().adminMode) return true
         if (!unlockRequirement) return true
         const req = get().lessonProgress[unlockRequirement]
         return req?.completed === true
       },
+
+      toggleAdminMode: () => set((state) => ({ adminMode: !state.adminMode })),
 
       completeLesson: (lessonId, score, xpReward) => {
         set((state) => {
