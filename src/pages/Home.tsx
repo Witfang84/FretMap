@@ -10,8 +10,9 @@ import type { FretPosition } from '../types'
 
 export function Home() {
   const navigate = useNavigate()
-  const { lessonProgress, currentStreak, totalXP, positionWeights } = useProgressStore()
+  const { lessonProgress, currentStreak, totalXP, positionWeights, adminMode } = useProgressStore()
   const isLessonUnlocked = useProgressStore((s) => s.isLessonUnlocked)
+  const toggleAdminMode = useProgressStore((s) => s.toggleAdminMode)
   const level = useProgressStore((s) => s.level())
 
   // First incomplete unlocked lesson → big CTA button
@@ -62,11 +63,23 @@ export function Home() {
             <span className="text-amber-500 text-xl">🎸</span>
             <span className="text-stone-100 font-black text-xl tracking-tight">FretMap</span>
           </div>
-          {hasProgress && (
-            <span className="text-stone-600 text-xs font-semibold">
-              Level {level}
-            </span>
-          )}
+          <div className="flex items-center gap-3">
+            {hasProgress && (
+              <span className="text-stone-600 text-xs font-semibold">
+                Level {level}
+              </span>
+            )}
+            <button
+              onClick={toggleAdminMode}
+              className={`text-xs font-bold px-2 py-0.5 rounded border transition-colors ${
+                adminMode
+                  ? 'bg-amber-500 border-amber-500 text-black'
+                  : 'border-stone-700 text-stone-600 hover:border-stone-500 hover:text-stone-400'
+              }`}
+            >
+              Admin
+            </button>
+          </div>
         </div>
       </div>
 
