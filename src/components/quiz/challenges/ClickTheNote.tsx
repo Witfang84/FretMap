@@ -2,7 +2,6 @@ import { useState, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Fretboard } from '../../fretboard/Fretboard'
 import { QuizPrompt } from '../QuizPrompt'
-import { FeedbackOverlay } from '../FeedbackOverlay'
 import { Button } from '../../ui/Button'
 import { buildFretboard, findAllPositionsOfNote, positionsMatch } from '../../../core/fretboard'
 import type { FretPosition, NaturalNote } from '../../../types'
@@ -29,7 +28,6 @@ export function ClickTheNote({ variant = 'basic', onComplete }: ClickTheNoteProp
   const [foundPositions, setFoundPositions] = useState<FretPosition[]>([])
   const [wrongPositions, setWrongPositions] = useState<FretPosition[]>([])
   const [roundDone, setRoundDone] = useState(false)
-  const [globalFeedback, setGlobalFeedback] = useState<'correct' | 'wrong' | null>(null)
 
   const currentNote = notes[noteIndex]
   const targetPositions = useMemo(
@@ -48,8 +46,6 @@ export function ClickTheNote({ variant = 'basic', onComplete }: ClickTheNoteProp
       const newFound = [...foundPositions, pos]
       setFoundPositions(newFound)
       setTotalCorrect((c) => c + 1)
-      setGlobalFeedback('correct')
-      setTimeout(() => setGlobalFeedback(null), 500)
 
       if (newFound.length === targetPositions.length) {
         setRoundDone(true)
@@ -57,9 +53,7 @@ export function ClickTheNote({ variant = 'basic', onComplete }: ClickTheNoteProp
     } else {
       setWrongPositions((w) => [...w, pos])
       setTotalMistakes((m) => m + 1)
-      setGlobalFeedback('wrong')
       setTimeout(() => {
-        setGlobalFeedback(null)
         setWrongPositions((w) => w.filter((p) => !positionsMatch(p, pos)))
       }, 600)
     }
@@ -86,7 +80,6 @@ export function ClickTheNote({ variant = 'basic', onComplete }: ClickTheNoteProp
 
   return (
     <div>
-      <FeedbackOverlay feedback={globalFeedback} />
       <QuizPrompt
         text={`Find all "${currentNote}" notes`}
         subtext={`Tap every ${currentNote} on the fretboard — ${foundPositions.length}/${targetPositions.length} found`}
