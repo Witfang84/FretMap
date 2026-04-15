@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Fretboard } from '../../fretboard/Fretboard'
 import { QuizPrompt } from '../QuizPrompt'
-import { FeedbackOverlay } from '../FeedbackOverlay'
 import { Button } from '../../ui/Button'
 import { STANDARD_TUNING } from '../../../core/guitar'
 import { getNoteAtFret } from '../../../core/fretboard'
@@ -89,7 +88,6 @@ export function NameTheFret({ targetStrings, onComplete }: NameTheFretProps) {
 
   return (
     <div>
-      <FeedbackOverlay feedback={feedback} />
       <QuizPrompt
         text={`What note is at fret ${q.fret}?`}
         subtext={`String: ${STRING_LABELS[q.stringNumber]} — Question ${current + 1} of ${questions.length}`}
@@ -101,10 +99,11 @@ export function NameTheFret({ targetStrings, onComplete }: NameTheFretProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
         >
+          {/* Switch to display mode on correct so the note name appears in the green circle */}
           <Fretboard
-            mode="quiz"
+            mode={feedback === 'correct' ? 'display' : 'quiz'}
             interactive={false}
-            highlightPositions={highlightPos}
+            highlightPositions={feedback ? [] : highlightPos}
             correctPositions={correctPos}
             wrongPositions={wrongPos}
             highlightedString={q.stringNumber}

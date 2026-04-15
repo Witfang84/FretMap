@@ -72,8 +72,8 @@ export function QuizRunner() {
         )
       case 'click-the-note': {
         const variant =
-          lesson!.id === '2.7' ? 'full' :
-          lesson!.id === '2.4' ? 'octave' :
+          lesson!.id === '2.9' ? 'full' :
+          lesson!.id === '2.6' ? 'octave' :
           'basic'
         return <ClickTheNote variant={variant} onComplete={handleComplete} />
       }
@@ -81,7 +81,7 @@ export function QuizRunner() {
         return <NoteHighlight onComplete={handleComplete} />
       case 'speed-round': {
         const phase = lesson!.phase === 1 ? 1 : 2
-        const duration = lesson!.id === '2.8' ? 60 : 45
+        const duration = lesson!.id === '2.10' ? 60 : 45
         return <SpeedRound durationSeconds={duration} phase={phase} onComplete={handleComplete} />
       }
       default:

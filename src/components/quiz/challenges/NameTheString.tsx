@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Fretboard } from '../../fretboard/Fretboard'
 import { QuizPrompt } from '../QuizPrompt'
-import { FeedbackOverlay } from '../FeedbackOverlay'
 import { Button } from '../../ui/Button'
 import { STANDARD_TUNING } from '../../../core/guitar'
 import type { FretPosition } from '../../../types'
@@ -69,7 +68,6 @@ export function NameTheString({ onComplete }: NameTheStringProps) {
 
   return (
     <div>
-      <FeedbackOverlay feedback={feedback} />
       <QuizPrompt
         text="Which string is highlighted?"
         subtext={`Question ${current + 1} of ${questions.length}`}

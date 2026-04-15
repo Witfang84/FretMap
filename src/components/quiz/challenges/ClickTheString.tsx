@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Fretboard } from '../../fretboard/Fretboard'
 import { QuizPrompt } from '../QuizPrompt'
-import { FeedbackOverlay } from '../FeedbackOverlay'
 import { STANDARD_TUNING } from '../../../core/guitar'
 import type { FretPosition } from '../../../types'
 
@@ -69,7 +68,6 @@ export function ClickTheString({ onComplete }: ClickTheStringProps) {
 
   return (
     <div>
-      <FeedbackOverlay feedback={feedback} />
       <QuizPrompt
         text={`Tap the ${q.label} string`}
         subtext={`Question ${current + 1} of ${questions.length}`}

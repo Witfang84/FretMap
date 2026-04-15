@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Fretboard } from '../../fretboard/Fretboard'
 import { QuizPrompt } from '../QuizPrompt'
-import { FeedbackOverlay } from '../FeedbackOverlay'
 import { Button } from '../../ui/Button'
 import { buildFretboard, findAllNaturalPositions, positionsMatch } from '../../../core/fretboard'
 import type { FretPosition, NoteAtPosition } from '../../../types'
@@ -36,7 +35,6 @@ export function NoteHighlight({ onComplete }: NoteHighlightProps) {
   const [phase, setPhase] = useState<Phase>('show')
   const [found, setFound] = useState<FretPosition[]>([])
   const [wrongTaps, setWrongTaps] = useState<FretPosition[]>([])
-  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null)
   const [correctCount, setCorrectCount] = useState(0)
   const TOTAL_ROUNDS = 6
 
@@ -56,19 +54,11 @@ export function NoteHighlight({ onComplete }: NoteHighlightProps) {
 
     if (correctTarget) {
       setFound((f) => [...f, pos])
-      setFeedback('correct')
       setCorrectCount((c) => c + 1)
-      setTimeout(() => {
-        setFeedback(null)
-        setPhase('feedback')
-      }, 600)
+      setTimeout(() => setPhase('feedback'), 600)
     } else {
       setWrongTaps((w) => [...w, pos])
-      setFeedback('wrong')
-      setTimeout(() => {
-        setFeedback(null)
-        setWrongTaps([])
-      }, 600)
+      setTimeout(() => setWrongTaps([]), 600)
     }
   }, [phase, round])
 
@@ -83,7 +73,6 @@ export function NoteHighlight({ onComplete }: NoteHighlightProps) {
     setPhase('show')
     setFound([])
     setWrongTaps([])
-    setFeedback(null)
   }
 
   const showPositions: FretPosition[] = phase === 'show' ? round.positions : []
@@ -91,7 +80,6 @@ export function NoteHighlight({ onComplete }: NoteHighlightProps) {
 
   return (
     <div>
-      <FeedbackOverlay feedback={feedback} />
       <AnimatePresence mode="wait">
         {phase === 'show' && (
           <motion.div key="show" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>

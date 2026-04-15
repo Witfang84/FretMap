@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Fretboard } from '../../fretboard/Fretboard'
 import { QuizPrompt } from '../QuizPrompt'
-import { FeedbackOverlay } from '../FeedbackOverlay'
 import { Button } from '../../ui/Button'
 import { STANDARD_TUNING } from '../../../core/guitar'
 import { getNoteAtFret } from '../../../core/fretboard'
@@ -135,7 +134,6 @@ export function SpeedRound({ durationSeconds = 45, phase = 1, onComplete }: Spee
 
   return (
     <div>
-      <FeedbackOverlay feedback={feedback} />
 
       {/* Timer + score bar */}
       <div className="flex justify-between items-center mb-4 px-1">
